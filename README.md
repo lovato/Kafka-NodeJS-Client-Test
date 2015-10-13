@@ -10,7 +10,7 @@ Kafka installation was made using this tutorial: https://www.digitalocean.com/co
 
 ### To Create a Topic
 ```
-./kafka/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic KAFKAJSTests
+./kafka/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 2 --topic KAFKAJSTests
 ```
 
 ### To Consume
