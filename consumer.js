@@ -9,33 +9,16 @@ var groupId = process.argv[3] || 'kafka-node-group';
 var partition = process.argv[4] || -1;
 
 var kafka = require('kafka-node'),
-    Consumer = kafka.Consumer,
+    HighLevelConsumer = kafka.HighLevelConsumer,
     client = new kafka.Client(kafkacluster, uuid.v1()),
     offset = new kafka.Offset(client);
 
 var libPath = process.env['KAFKA_COV'] ? './node_modules/kafka-node/lib-cov/' : './node_modules/kafka-node/lib/',
     TopicsNotExistError = require(libPath + 'errors').TopicsNotExistError;
 
-if (partition > -1) {
-    var consumer = new Consumer(
-        client, [{
-            topic: topic,
-            partition: partition
-        }], {
-            groupId: groupId,
-            autoCommit: true
-        }
-    );
-} else {
-    var consumer = new Consumer(
-        client, [{
-            topic: topic
-        }], {
-            groupId: groupId,
-            autoCommit: true
-        }
-    );
-}
+var topics = [ { topic: topic }];
+var options = { autoCommit: true, fetchMaxWaitMs: 1000, fetchMaxBytes: 1024*1024 };
+var consumer = new HighLevelConsumer(client, topics, options);
 
 consumer.on('error', function(err) {
     if (err instanceof TopicsNotExistError) {

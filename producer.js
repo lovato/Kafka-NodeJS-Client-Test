@@ -9,6 +9,8 @@ var partition = process.argv[3] || -1;
 var key = process.argv[4] || 'some_key';
 var message = process.argv[5] || 'some_message';
 
+var count = 10, rets = 0;
+
 var kafka = require('kafka-node'),
     HighLevelProducer = kafka.HighLevelProducer,
     KeyedMessage = kafka.KeyedMessage,
