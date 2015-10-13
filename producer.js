@@ -5,7 +5,7 @@ var kafkacluster = process.env.KAFKACLUSTER || 'localhost';
 var uuid = require('uuid');
 
 var topic = process.argv[2] || 'TutorialTopic';
-var partition = process.argv[3] || 0;
+var partition = process.argv[3] || -1;
 var key = process.argv[4] || 'some_key';
 var message = process.argv[5] || 'some_message';
 
@@ -23,12 +23,20 @@ var kafka = require('kafka-node'),
         payload: message,
         timestamp: new Date().toString()
     },
-    km = new KeyedMessage(key, JSON.stringify(payload)),
+    km = new KeyedMessage(key, JSON.stringify(payload));
+
+if (partition > -1) {
     payloads = [{
         topic: topic,
         messages: [km],
         partition: partition
     }];
+} else {
+    payloads = [{
+        topic: topic,
+        messages: [km]
+    }];
+}
 
 producer.on('ready', function() {
     var req1 = producer.send(payloads, function(err, data) {
@@ -51,4 +59,3 @@ producer.on('error', function(err) {
     console.log(err);
     process.exit(1);
 })
-

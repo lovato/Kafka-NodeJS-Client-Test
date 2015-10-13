@@ -5,8 +5,8 @@ var uuid = require('uuid');
 var kafkacluster = process.env.KAFKACLUSTER || 'localhost';
 
 var topic = process.argv[2] || 'TutorialTopic';
-var partition = process.argv[3] || 0;
-var groupId = process.argv[4] || 'kafka-node-group';
+var groupId = process.argv[3] || 'kafka-node-group';
+var partition = process.argv[4] || -1;
 
 var kafka = require('kafka-node'),
     Consumer = kafka.Consumer,
@@ -16,15 +16,26 @@ var kafka = require('kafka-node'),
 var libPath = process.env['KAFKA_COV'] ? './node_modules/kafka-node/lib-cov/' : './node_modules/kafka-node/lib/',
     TopicsNotExistError = require(libPath + 'errors').TopicsNotExistError;
 
-var consumer = new Consumer(
-    client, [{
-        topic: topic,
-        partition: partition
-    }], {
-        groupId: groupId,
-        autoCommit: true
-    }
-);
+if (partition > -1) {
+    var consumer = new Consumer(
+        client, [{
+            topic: topic,
+            partition: partition
+        }], {
+            groupId: groupId,
+            autoCommit: true
+        }
+    );
+} else {
+    var consumer = new Consumer(
+        client, [{
+            topic: topic
+        }], {
+            groupId: groupId,
+            autoCommit: true
+        }
+    );
+}
 
 consumer.on('error', function(err) {
     if (err instanceof TopicsNotExistError) {
@@ -42,10 +53,9 @@ consumer.on('message', function(message) {
     console.log(message);
 });
 
-process.on('uncaughtException', function ( err ) {
+process.on('uncaughtException', function(err) {
     console.error('An uncaughtException was found, the program will end.');
     console.log(err);
     //hopefully do some logging.
     process.exit(1);
 });
-

@@ -18,7 +18,7 @@ Kafka installation was made using this tutorial: https://www.digitalocean.com/co
 Fire consumers (at most to the number of partitions you have) this way:
 
 ```
-KAFKACLUSTER=localhost node consumer.js [topic] [partition] [groupId]
+KAFKACLUSTER=localhost node consumer.js [topic] [groupId] [partition]
 ```
 All parameters have default values, so you can simply run:
 ```
